@@ -31,7 +31,7 @@ class DismissReviewsAction(actions.Action):
     }
 
     def run(self, installation_id, installation_token, subscription,
-            event_type, data, pull, missing_conditions):
+            event_type, data, pull, missing_conditions, previous_check):
         if (event_type == "pull_request" and data["action"] == "synchronize"):
             # FIXME(sileht): Currently sender id is not the bot by the admin
             # user that enroll the repo in Mergify, because branch_updater uses

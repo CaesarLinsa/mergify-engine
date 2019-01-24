@@ -27,7 +27,7 @@ class CommentAction(actions.Action):
     }
 
     def run(self, installation_id, installation_token, subscription,
-            event_type, data, pull, missing_conditions):
+            event_type, data, pull, missing_conditions, previous_check):
         try:
             pull.g_pull.create_issue_comment(self.config["message"])
         except github.GithubException as e:
@@ -39,5 +39,7 @@ class CommentAction(actions.Action):
                 self.config["message"])
 
     def cancel(self, installation_id, installation_token, subscription,
-               event_type, data, pull, missing_conditions):  # pragma: no cover
-        return self.cancelled_check_report
+               event_type, data, pull, missing_conditions,
+               previous_check):  # pragma: no cover
+        if previous_check:
+            return self.cancelled_check_report

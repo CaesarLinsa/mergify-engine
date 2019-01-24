@@ -106,12 +106,6 @@ def run_actions(installation_id, installation_token, subscription,
             prev_check = checks.get(check_name)
 
             if missing_conditions:
-                if not prev_check:
-                    LOG.info("action evaluation: nothing to cancel",
-                             check_name=check_name,
-                             pull_request=pull,
-                             missing_conditions=missing_conditions)
-                    continue
                 method_name = "cancel"
                 expected_conclusion = ["cancelled"]
             else:
@@ -133,7 +127,8 @@ def run_actions(installation_id, installation_token, subscription,
             report = exec_action(
                 method_name, rule, action,
                 installation_id, installation_token, subscription,
-                event_type, data, pull, missing_conditions
+                event_type, data, pull, missing_conditions,
+                prev_check
             )
 
             if report:
@@ -147,7 +142,8 @@ def run_actions(installation_id, installation_token, subscription,
                      report=report,
                      check_name=check_name,
                      pull_request=pull,
-                     missing_conditions=missing_conditions)
+                     missing_conditions=missing_conditions,
+                     previous_check=prev_check)
 
 
 @app.task

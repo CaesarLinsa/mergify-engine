@@ -87,7 +87,7 @@ class MergeAction(actions.Action):
     }
 
     def run(self, installation_id, installation_token, subscription,
-            event_type, data, pull, missing_conditions):
+            event_type, data, pull, missing_conditions, previous_check):
         pull.log.debug("process merge", config=self.config)
 
         output = merge_report(pull)
@@ -132,19 +132,22 @@ class MergeAction(actions.Action):
                         "possible, manual intervention required", "")
 
     def cancel(self, installation_id, installation_token, subscription,
-               event_type, data, pull, missing_conditions):
+               event_type, data, pull, missing_conditions, previous_check):
         # We just rebase the pull request, don't cancel it yet if CIs are
         # running. The pull request will be merge if all rules match again.
         # if not we will delete it when we received all CIs termination
-        if self.config["strict"] and self._required_statuses_in_progress(
-                pull, missing_conditions):
+        if (previous_check
+                and self.config["strict"]
+                and self._required_statuses_in_progress(
+                    pull, missing_conditions)):
             return
 
         if self.config["strict"] == "smart":
             redis = utils.get_redis_for_cache()
             redis.srem(_get_queue_cache_key(pull), pull.g_pull.number)
 
-        return self.cancelled_check_report
+        if previous_check:
+            return self.cancelled_check_report
 
     @staticmethod
     def _required_statuses_in_progress(pull, missing_conditions):

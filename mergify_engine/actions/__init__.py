@@ -34,10 +34,12 @@ class Action(abc.ABC):
 
     @staticmethod
     def run(installation_id, installation_token, subscription,
-            event_type, data, pull, missing_conditions):  # pragma: no cover
+            event_type, data, pull, missing_conditions,
+            previous_check):  # pragma: no cover
         pass
 
     @staticmethod
     def cancel(installation_id, installation_token, subscription,
-               event_type, data, pull, missing_conditions):  # pragma: no cover
+               event_type, data, pull, missing_conditions,
+               previous_check):  # pragma: no cover
         pass

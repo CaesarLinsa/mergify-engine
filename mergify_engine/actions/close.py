@@ -30,7 +30,7 @@ class CloseAction(actions.Action):
     }
 
     def run(self, installation_id, installation_token, subscription,
-            event_type, data, pull, missing_conditions):
+            event_type, data, pull, missing_conditions, previous_check):
         if pull.g_pull.state == "close":
             return
 
@@ -52,5 +52,6 @@ class CloseAction(actions.Action):
                 self.config["message"])
 
     def cancel(self, installation_id, installation_token, subscription,
-               event_type, data, pull, missing_conditions):  # pragma: no cover
-        return self.cancelled_check_report
+               event_type, data, pull, missing_conditions, previous_check):  # pragma: no cover
+        if previous_check:
+            return self.cancelled_check_report
